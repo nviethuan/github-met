@@ -223,7 +223,7 @@ func streakSVG(streak int, startedDate time.Time, totalContributions int) string
                 <!-- Total Contributions range -->
                 <g transform="translate(82.5, 114)">
                     <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#464646" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
-                        ` + startedDate.Format("02 Jan 2006") + ` - Present
+                        ` + startedDate.Format("DD MMM, YYYY") + ` - Present
                     </text>
                 </g>
             </g>
