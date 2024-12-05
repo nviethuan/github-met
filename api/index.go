@@ -134,32 +134,29 @@ func calculateStreak(weeks []ContributionWeek) int {
 	var streak int
 	var previousDate time.Time
 
-	// Flatten the weeks into a single slice of days
-	var contributionDays []ContributionDay
-	for _, week := range weeks {
-		contributionDays = append(contributionDays, week.ContributionDays...)
-	}
+	// Iterate backward through weeks and days to calculate streak
+	for i := len(weeks) - 1; i >= 0; i-- {
+		week := weeks[i]
+		for j := len(week.ContributionDays) - 1; j >= 0; j-- {
+			day := week.ContributionDays[j]
+			if day.ContributionCount == 0 {
+				return streak // Streak ends when a day with no contributions is encountered
+			}
 
-	// Iterate backward to calculate streak
-	for i := len(contributionDays) - 1; i >= 0; i-- {
-		day := contributionDays[i]
-		if day.ContributionCount == 0 {
-			break // Streak ends when a day with no contributions is encountered
+			date, err := time.Parse("2006-01-02", day.Date)
+			if err != nil {
+				fmt.Println("Error parsing date:", err)
+				os.Exit(1)
+			}
+
+			// Check for consecutive days
+			if !previousDate.IsZero() && !date.AddDate(0, 0, 1).Equal(previousDate) {
+				return streak
+			}
+
+			streak++
+			previousDate = date
 		}
-
-		date, err := time.Parse("2006-01-02", day.Date)
-		if err != nil {
-			fmt.Println("Error parsing date:", err)
-			os.Exit(1)
-		}
-
-		// Check for consecutive days
-		if !previousDate.IsZero() && !date.AddDate(0, 0, 1).Equal(previousDate) {
-			break
-		}
-
-		streak++
-		previousDate = date
 	}
 
 	return streak
