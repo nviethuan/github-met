@@ -249,5 +249,12 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 
 	calculatedStreakData := utils.CalculateStreak(weeks)
 
+	jsonData, err := json.MarshalIndent(calculatedStreakData, "", "  ")
+	if err != nil {
+		fmt.Println("Error marshaling calculated streak data:", err)
+		os.Exit(1)
+	}
+	fmt.Println(string(jsonData))
+
 	return totalContributions, calculatedStreakData
 }
