@@ -115,7 +115,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	streak := calculateStreak(data.Data.User.ContributionsCollection.ContributionCalendar.Weeks)
-	startedDate := data.Data.User.CreatedAt
+	startedDate, err := time.Parse(time.RFC3339, data.Data.User.CreatedAt)
+	if err != nil {
+		fmt.Println("Error parsing started date:", err)
+		os.Exit(1)
+	}
 
 	// Create a response map to include streak and started date information
 	// response := map[string]interface{}{
@@ -166,7 +170,7 @@ func calculateStreak(weeks []ContributionWeek) int {
 	return streak
 }
 
-func streakSVG(streak int, startedDate string) string {
+func streakSVG(streak int, startedDate time.Time) string {
 	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 495 195" width="495px" height="195px" direction="ltr">
         <style>
             @keyframes currstreak {
@@ -215,7 +219,7 @@ func streakSVG(streak int, startedDate string) string {
                 <!-- Total Contributions range -->
                 <g transform="translate(82.5, 114)">
                     <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#464646" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
-                        ` + startedDate + ` - Present
+                        ` + startedDate.Format("02 Jan 2006") + ` - Present
                     </text>
                 </g>
             </g>
