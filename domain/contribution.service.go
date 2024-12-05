@@ -246,15 +246,14 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 		weeks = append(weeks, contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks...)
 	}
 
-
-	calculatedStreakData := utils.CalculateStreak(weeks)
-
-	jsonData, err := json.MarshalIndent(calculatedStreakData, "", "  ")
+	weeksJson, err := json.Marshal(weeks)
 	if err != nil {
-		fmt.Println("Error marshaling calculated streak data:", err)
+		fmt.Println("Error marshaling weeks:", err)
 		os.Exit(1)
 	}
-	fmt.Println(string(jsonData))
+	fmt.Println(string(weeksJson))
+
+	calculatedStreakData := utils.CalculateStreak(weeks)
 
 	return totalContributions, calculatedStreakData
 }
