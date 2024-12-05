@@ -36,7 +36,6 @@ type ContributionData struct {
 				} `json:"contributionCalendar"`
 			} `json:"contributionsCollection"`
 			CreatedAt string `json:"createdAt"`
-			TotalContributions int `json:"totalContributions"`
 		} `json:"user"`
 	} `json:"data"`
 }
@@ -66,7 +65,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	          }
 	        }
 	      }
-				totalContributions
 	    }
 	    createdAt
 	  }
@@ -116,8 +114,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		os.Exit(1)
 	}
 
-	totalContributions := data.Data.User.TotalContributions
-
 	streak := calculateStreak(data.Data.User.ContributionsCollection.ContributionCalendar.Weeks)
 	startedDate, err := time.Parse(time.RFC3339, data.Data.User.CreatedAt)
 	if err != nil {
@@ -139,7 +135,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "image/svg+xml")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(streakSVG(streak, startedDate, totalContributions)))
+	w.Write([]byte(streakSVG(streak, startedDate)))
 }
 
 func calculateStreak(weeks []ContributionWeek) int {
@@ -174,7 +170,7 @@ func calculateStreak(weeks []ContributionWeek) int {
 	return streak
 }
 
-func streakSVG(streak int, startedDate time.Time, totalContributions int) string {
+func streakSVG(streak int, startedDate time.Time) string {
 	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 495 195" width="495px" height="195px" direction="ltr">
         <style>
             @keyframes currstreak {
@@ -209,7 +205,7 @@ func streakSVG(streak int, startedDate time.Time, totalContributions int) string
                 <!-- Total Contributions big number -->
                 <g transform="translate(82.5, 48)">
                     <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#151515" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.6s">
-                        ` + strconv.Itoa(totalContributions) + `
+                        2,859
                     </text>
                 </g>
 
@@ -223,7 +219,7 @@ func streakSVG(streak int, startedDate time.Time, totalContributions int) string
                 <!-- Total Contributions range -->
                 <g transform="translate(82.5, 114)">
                     <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#464646" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
-                        ` + startedDate.Format("DD MMM, YYYY") + ` - Present
+                        ` + startedDate.Format("02 Jan, 2006") + ` - Present
                     </text>
                 </g>
             </g>
