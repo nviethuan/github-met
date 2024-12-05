@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
-	"io"
 	"time"
 )
 
@@ -34,6 +34,7 @@ type ContributionData struct {
 					Weeks []ContributionWeek `json:"weeks"`
 				} `json:"contributionCalendar"`
 			} `json:"contributionsCollection"`
+			CreatedAt string `json:"createdAt"`
 		} `json:"user"`
 	} `json:"data"`
 }
@@ -64,6 +65,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	        }
 	      }
 	    }
+	    createdAt
 	  }
 	}`
 
@@ -110,13 +112,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error unmarshaling response:", err)
 		os.Exit(1)
 	}
-	
-	streak := calculateStreak(data.Data.User.ContributionsCollection.ContributionCalendar.Weeks)
 
-	// Create a response map to include streak information
+	streak := calculateStreak(data.Data.User.ContributionsCollection.ContributionCalendar.Weeks)
+	startedDate := data.Data.User.CreatedAt
+
+	// Create a response map to include streak and started date information
 	response := map[string]interface{}{
-		"contributionData": data,
-		"streak":           streak,
+		"streak":      streak,
+		"startedDate": startedDate,
 	}
 
 	jsonData, err := json.MarshalIndent(response, "", "  ")
