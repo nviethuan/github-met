@@ -41,6 +41,7 @@ type ContributionData struct {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
+	
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
 		http.Error(w, "GITHUB_TOKEN is not set", http.StatusInternalServerError)
