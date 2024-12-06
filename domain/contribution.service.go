@@ -186,6 +186,8 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 		}
 	}`
 
+	fmt.Println("query:", query)
+
 	graphqlQuery := types.GraphQLQuery{
 		Query: query,
 	}
