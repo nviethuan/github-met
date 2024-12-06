@@ -8,15 +8,60 @@ import (
 )
 
 func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
-	fmt.Println("days length", len(days))
-	fmt.Println("days", days)
-	var currentStreakData types.StreakData
+	currentStreakData := make(chan types.StreakData)
+	longestStreakData := make(chan types.StreakData)
+
+	go CurrentStreak(&days, currentStreakData)
+	go LongestStreak(&days, longestStreakData)
+
+	return types.CalculatedStreakData{
+		CurrentStreak: <-currentStreakData,
+		LongestStreak: <-longestStreakData,
+	}
+}
+
+func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan types.StreakData) {
+	lastDay := (*days)[len(*days)-1]
+
+	if lastDay.ContributionCount == 0 {
+		date, err := time.Parse("2006-01-02", lastDay.Date)
+		if err != nil {
+			fmt.Println("Error parsing date:", err)
+			os.Exit(1)
+		}
+
+		currentStreakDataChan <- types.StreakData{
+			Streak:          0,
+			StreakStartDate: date,
+			StreakEndDate:   date,
+		}
+	}
+
+	currentStreakData := types.StreakData{}
+
+	for i := len(*days) - 1; i >= 0; i-- {
+		if (*days)[i].ContributionCount > 0 {
+			date, err := time.Parse("2006-01-02", (*days)[i].Date)
+			if err != nil {
+				fmt.Println("Error parsing date:", err)
+				os.Exit(1)
+			}
+			currentStreakData.StreakStartDate = date
+			currentStreakData.StreakEndDate = date
+			currentStreakData.Streak++
+		} else {
+			break
+		}
+	}
+
+	currentStreakDataChan <- currentStreakData
+}
+
+func LongestStreak(days *[]types.ContributionDay, longestStreakDataChan chan types.StreakData) {
 	var longestStreakData types.StreakData
+	var currentStreakData types.StreakData
 
-	currentStreakLength := 0
-	longestStreakLength := 0
-
-	for _, day := range days {
+	for i, day := range *days {
 		date, err := time.Parse("2006-01-02", day.Date)
 		if err != nil {
 			fmt.Println("Error parsing date:", err)
@@ -24,32 +69,24 @@ func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
 		}
 
 		if day.ContributionCount > 0 {
-			if currentStreakLength == 0 {
+			if currentStreakData.Streak == 0 {
 				currentStreakData.StreakStartDate = date
 			}
-			currentStreakLength++
 			currentStreakData.StreakEndDate = date
+			currentStreakData.Streak++
 		} else {
-			if currentStreakLength > longestStreakLength {
-				longestStreakLength = currentStreakLength
+			if currentStreakData.Streak > longestStreakData.Streak {
 				longestStreakData = currentStreakData
 			}
-			currentStreakLength = 0
-			currentStreakData = types.StreakData{} // Reset current streak data
+			currentStreakData = types.StreakData{}
+		}
+
+		if i == len(*days)-1 && currentStreakData.Streak > longestStreakData.Streak {
+			longestStreakData = currentStreakData
 		}
 	}
 
-	if currentStreakLength > longestStreakLength {
-		longestStreakData = currentStreakData
-	}
-
-	currentStreakData.Streak = currentStreakLength
-	longestStreakData.Streak = longestStreakLength
-
-	return types.CalculatedStreakData{
-		CurrentStreak: currentStreakData,
-		LongestStreak: longestStreakData,
-	}
+	longestStreakDataChan <- longestStreakData
 }
 
 func FlattenContributionDays(weeks []types.ContributionWeek) []types.ContributionDay {
