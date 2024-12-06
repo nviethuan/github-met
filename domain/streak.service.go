@@ -8,6 +8,8 @@ import (
 )
 
 func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
+	fmt.Println("days length", len(days))
+	fmt.Println("days", days)
 	var currentStreakData types.StreakData
 	var longestStreakData types.StreakData
 
