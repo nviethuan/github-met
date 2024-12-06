@@ -84,79 +84,6 @@ func GetUserCreatedAt(username *string) time.Time {
 	return createdAt
 }
 
-// func GetContributionsStreak(username string, startDate *time.Time) types.StreakData {
-// 	query := `
-// 	query {
-// 	  user(login: "` + username + `") {
-// 	    contributionsCollection {
-// 	      contributionCalendar {
-// 	        weeks {
-// 	          contributionDays {
-// 	            date
-// 	            contributionCount
-// 	          }
-// 	        }
-// 	      }
-// 	    }
-// 	  }
-// 	}`
-
-// 	graphqlQuery := types.GraphQLQuery{
-// 		Query: query,
-// 	}
-
-// 	payload, err := json.Marshal(graphqlQuery)
-// 	if err != nil {
-// 		fmt.Println("Error marshaling query:", err)
-// 		os.Exit(1)
-// 	}
-
-// 	client := &http.Client{}
-// 	req, err := http.NewRequest("POST", githubGraphQLURL, bytes.NewBuffer(payload))
-// 	if err != nil {
-// 		fmt.Println("Error creating request:", err)
-// 		os.Exit(1)
-// 	}
-
-// 	req.Header.Set("Authorization", "Bearer "+token)
-// 	req.Header.Set("Content-Type", "application/json")
-
-// 	resp, err := client.Do(req)
-// 	if err != nil {
-// 		fmt.Println("Error making request:", err)
-// 		os.Exit(1)
-// 	}
-// 	defer resp.Body.Close()
-
-// 	// Read the response
-// 	body, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		fmt.Println("Error reading response body:", err)
-// 		os.Exit(1)
-// 	}
-
-// 	// Unmarshal the response into ContributionData
-// 	var data types.ContributionData
-// 	err = json.Unmarshal(body, &data)
-// 	if err != nil {
-// 		fmt.Println("Error unmarshaling response:", err)
-// 		os.Exit(1)
-// 	}
-// 	streak, startedDateStreak, endDateStreak := utils.CalculateStreak(data.Data.User.ContributionsCollection.ContributionCalendar.Weeks)
-// 	startedDate, err := time.Parse(time.RFC3339, data.Data.User.CreatedAt)
-// 	if err != nil {
-// 		fmt.Println("Error parsing started date:", err)
-// 		os.Exit(1)
-// 	}
-
-// 	return types.StreakData{
-// 		Streak:          streak,
-// 		StreakStartDate: startedDateStreak,
-// 		StreakEndDate:   endDateStreak,
-// 		StartedDate:     startedDate,
-// 	}
-// }
-
 func GetContributionsForYear(username string, start *time.Time, end *time.Time) (types.ContributionData, error) {
 	contributionsCollectionParams := ""
 
@@ -182,8 +109,6 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 			}
 		}
 	}`
-
-	fmt.Println("query:", query)
 
 	graphqlQuery := types.GraphQLQuery{
 		Query: query,

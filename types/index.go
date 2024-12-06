@@ -57,6 +57,7 @@ type RenderData struct {
 	CalculatedStreakData
 	TotalContributions int
 	StartedDate        time.Time
+	Background         string
 }
 
 

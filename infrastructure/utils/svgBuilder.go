@@ -3,10 +3,24 @@ package utils
 import (
 	"strconv"
 
-	types "github-met/types"
+	"github-met/types"
 )
 
 func StreakSVG(data *types.RenderData) string {
+	var background string
+	var textColor string
+	var strokeColor string
+
+	if data.Background == "dark" {
+		background = "#151515"
+		textColor = "#FFFEFE"
+		strokeColor = "#E4E2E2"
+	} else {
+		background = "#FFFEFE"
+		textColor = "#151515"
+		strokeColor = "#464646"
+	}
+
 	return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 495 195" width="495px" height="195px" direction="ltr">
   <style>
     @keyframes currstreak {
@@ -30,7 +44,7 @@ func StreakSVG(data *types.RenderData) string {
   </defs>
   <g clip-path="url(#outer_rectangle)">
     <g style="isolation: isolate">
-      <rect stroke="#E4E2E2" fill="#FFFEFE" rx="4.5" x="0.5" y="0.5" width="494" height="194"/>
+      <rect stroke="#E4E2E2" fill="` + background +`" rx="4.5" x="0.5" y="0.5" width="494" height="194"/>
     </g>
     <g style="isolation: isolate">
       <line x1="165" y1="28" x2="165" y2="170" vector-effect="non-scaling-stroke" stroke-width="1" stroke="#E4E2E2" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"/>
@@ -39,21 +53,21 @@ func StreakSVG(data *types.RenderData) string {
       <g style="isolation: isolate">
         <!-- Total Contributions big number -->
         <g transform="translate(82.5, 48)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#151515" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.6s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.6s">
           ` + FormatNumber(data.TotalContributions) + `
           </text>
         </g>
 
         <!-- Total Contributions label -->
         <g transform="translate(82.5, 84)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#151515" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="14px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="14px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s">
               Total Contributions
           </text>
         </g>
 
         <!-- Total Contributions range -->
         <g transform="translate(82.5, 114)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#464646" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + strokeColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
           ` + data.StartedDate.Format("02 Jan, 2006") + ` - Present
           </text>
         </g>
@@ -62,7 +76,7 @@ func StreakSVG(data *types.RenderData) string {
       <g style="isolation: isolate">
         <!-- Current Streak big number -->
         <g transform="translate(247.5, 48)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#151515" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="animation: currstreak 0.6s linear forwards">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="animation: currstreak 0.6s linear forwards">
             ` + strconv.Itoa(data.CurrentStreak.Streak) + `
           </text>
         </g>
@@ -76,7 +90,7 @@ func StreakSVG(data *types.RenderData) string {
 
         <!-- Current Streak range -->
         <g transform="translate(247.5, 145)">
-          <text x="0" y="21" stroke-width="0" text-anchor="middle" fill="#464646" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.9s">
+          <text x="0" y="21" stroke-width="0" text-anchor="middle" fill="` + strokeColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.9s">
             ` + data.CurrentStreak.StreakStartDate.Format("02 Jan") + ` - ` + data.CurrentStreak.StreakEndDate.Format("02 Jan") + `
           </text>
         </g>
@@ -95,21 +109,21 @@ func StreakSVG(data *types.RenderData) string {
       <g style="isolation: isolate">
         <!-- Longest Streak big number -->
         <g transform="translate(412.5, 48)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#151515" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.2s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.2s">
             ` + strconv.Itoa(data.LongestStreak.Streak) + `
           </text>
         </g>
 
         <!-- Longest Streak label -->
         <g transform="translate(412.5, 84)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#151515" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="14px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.3s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="14px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.3s">
               Longest Streak
           </text>
         </g>
 
         <!-- Longest Streak range -->
         <g transform="translate(412.5, 114)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="#464646" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.4s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + strokeColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.4s">
             ` + data.LongestStreak.StreakStartDate.Format("02 Jan") + ` - ` + data.LongestStreak.StreakEndDate.Format("02 Jan") + `
           </text>
         </g>
