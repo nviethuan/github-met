@@ -173,20 +173,14 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 	totalContributions := 0
 	weeks := []types.ContributionWeek{}
 	for i := 0; i < len(yearRanges); i++ {
-		fmt.Println("i", i)
 		contributionData := <-contributionsDataChan
 
 		totalContributions += contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions
 		weeks = append(weeks, contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks...)
-		fmt.Println("length of weeks", len(weeks))
 	}
-	fmt.Println("for loop done")
 
-	fmt.Println("length of weeks ======", len(weeks))
-
-	calculatedStreakData := utils.CalculateStreak(weeks)
-
-	fmt.Println("Calculated streak done")
+	contributionDays := SortContributionDays(FlattenContributionDays(weeks))
+	calculatedStreakData := CalculateStreak(contributionDays)
 
 	return totalContributions, calculatedStreakData
 }

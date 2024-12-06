@@ -2,87 +2,87 @@ package domain
 
 import (
 	"fmt"
+	"github-met/types"
 	"os"
 	"time"
-	types "github-met/types"
 )
 
-func CalculateStreak(weeks []types.ContributionWeek) (int, time.Time, time.Time) {
-	var streak int
-	var previousDate, startDate, endDate time.Time
+func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
+	var currentStreakData types.StreakData
+	var longestStreakData types.StreakData
 
-	// Iterate backward through weeks and days to calculate streak
-	for i := len(weeks) - 1; i >= 0; i-- {
-		week := weeks[i]
-		for j := len(week.ContributionDays) - 1; j >= 0; j-- {
-			day := week.ContributionDays[j]
-			if day.ContributionCount == 0 {
-				return streak, startDate, endDate // Streak ends when a day with no contributions is encountered
-			}
+	currentStreakLength := 0
+	longestStreakLength := 0
 
-			date, err := time.Parse("2006-01-02", day.Date)
-			if err != nil {
-				fmt.Println("Error parsing date:", err)
-				os.Exit(1)
-			}
+	for _, day := range days {
+		date, err := time.Parse("2006-01-02", day.Date)
+		if err != nil {
+			fmt.Println("Error parsing date:", err)
+			os.Exit(1)
+		}
 
-			// Check for consecutive days
-			if !previousDate.IsZero() && !date.AddDate(0, 0, 1).Equal(previousDate) {
-				return streak, startDate, endDate
+		if day.ContributionCount > 0 {
+			if currentStreakLength == 0 {
+				currentStreakData.StreakStartDate = date
 			}
-
-			if streak == 0 {
-				endDate = date // Set end date of streak
+			currentStreakLength++
+			currentStreakData.StreakEndDate = date
+		} else {
+			if currentStreakLength > longestStreakLength {
+				longestStreakLength = currentStreakLength
+				longestStreakData = currentStreakData
 			}
-			streak++
-			startDate = date // Update start date of streak
-			previousDate = date
+			currentStreakLength = 0
+			currentStreakData = types.StreakData{} // Reset current streak data
 		}
 	}
 
-	return streak, startDate, endDate
+	if currentStreakLength > longestStreakLength {
+		longestStreakData = currentStreakData
+	}
+
+	currentStreakData.Streak = currentStreakLength
+	longestStreakData.Streak = longestStreakLength
+
+	return types.CalculatedStreakData{
+		CurrentStreak: currentStreakData,
+		LongestStreak: longestStreakData,
+	}
 }
 
-func GetLastStreak(weeks []types.ContributionWeek) (int, time.Time, time.Time) {
-	var streak int
-	var startDate, endDate time.Time
-	var currentStreak int
-	var currentStartDate, currentEndDate time.Time
+func FlattenContributionDays(weeks []types.ContributionWeek) []types.ContributionDay {
+	var contributionDays []types.ContributionDay
 
-	for i := len(weeks) - 1; i >= 0; i-- {
-		week := weeks[i]
-		for j := len(week.ContributionDays) - 1; j >= 0; j-- {
-			day := week.ContributionDays[j]
-			date, err := time.Parse("2006-01-02", day.Date)
-			if err != nil {
-				fmt.Println("Error parsing date:", err)
-				os.Exit(1)
-			}
+	for _, week := range weeks {
+		contributionDays = append(contributionDays, week.ContributionDays...)
+	}
 
-			if day.ContributionCount > 0 {
-				if currentStreak == 0 {
-					currentEndDate = date
-				}
-				currentStreak++
-				currentStartDate = date
-			} else {
-				if currentStreak > streak {
-					streak = currentStreak
-					startDate = currentStartDate
-					endDate = currentEndDate
-				}
-				currentStreak = 0
-			}
+	return contributionDays
+}
+
+func SortContributionDays(contributionDays []types.ContributionDay) []types.ContributionDay {
+	quickSort(contributionDays, 0, len(contributionDays)-1)
+	return contributionDays
+}
+
+func quickSort(contributionDays []types.ContributionDay, low, high int) {
+	if low < high {
+		pi := partition(contributionDays, low, high)
+		quickSort(contributionDays, low, pi-1)
+		quickSort(contributionDays, pi+1, high)
+	}
+}
+
+func partition(contributionDays []types.ContributionDay, low, high int) int {
+	pivot := contributionDays[high]
+	i := low - 1
+
+	for j := low; j < high; j++ {
+		if contributionDays[j].Date < pivot.Date {
+			i++
+			contributionDays[i], contributionDays[j] = contributionDays[j], contributionDays[i]
 		}
 	}
-
-	if currentStreak > streak {
-		streak = currentStreak
-		startDate = currentStartDate
-		endDate = currentEndDate
-	}
-
-	return streak, startDate, endDate
+	contributionDays[i+1], contributionDays[high] = contributionDays[high], contributionDays[i+1]
+	return i + 1
 }
-
-
