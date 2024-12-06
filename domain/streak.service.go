@@ -47,7 +47,6 @@ func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan typ
 				os.Exit(1)
 			}
 			currentStreakData.StreakStartDate = date
-			currentStreakData.StreakEndDate = date
 			currentStreakData.Streak++
 		} else {
 			break
