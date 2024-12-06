@@ -166,21 +166,26 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 				errorsChan <- err
 				return
 			}
+			fmt.Println("total contributions", contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions)
+			fmt.Println("weeks", len(contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks))
 			contributionsDataChan <- contributionData
 		}(yearRange[0], yearRange[1])
 	}
 
 	totalContributions := 0
 	weeks := []types.ContributionWeek{}
-	for contributionData := range contributionsDataChan {
-		totalContributions += contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions
-		weeks = append(weeks, contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks...)
+	for i := 0; i < len(yearRanges); i++ {
+		select {
+		case contributionData := <-contributionsDataChan:
+			totalContributions += contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions
+			weeks = append(weeks, contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks...)
+		case err := <-errorsChan:
+			fmt.Println("Error fetching contributions:", err)
+			return 0, types.CalculatedStreakData{}
+		}
 	}
 
-	for err := range errorsChan {
-		fmt.Println("Error fetching contributions:", err)
-		return 0, types.CalculatedStreakData{}
-	}
+	calculatedStreakData := utils.CalculateStreak(weeks)
 
-	return totalContributions, utils.CalculateStreak(weeks)
+	return totalContributions, calculatedStreakData
 }
