@@ -23,6 +23,8 @@ func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
 func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan types.StreakData) {
 	lastDay := (*days)[len(*days)-1]
 
+	fmt.Println("lastDay", lastDay)
+
 	if lastDay.ContributionCount == 0 {
 		date, err := time.Parse("2006-01-02", lastDay.Date)
 		if err != nil {
