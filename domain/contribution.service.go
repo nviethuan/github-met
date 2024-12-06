@@ -158,16 +158,13 @@ func GetUserCreatedAt(username *string) time.Time {
 // }
 
 func GetContributionsForYear(username string, start *time.Time, end *time.Time) types.ContributionData {
-	fmt.Printf("start: %v - end: %v\n", start, end)
 	contributionsCollectionParams := ""
 
 	if start != nil && end != nil {
-		contributionsCollectionParams = `(from: "` + start.Format("2006-01-02") + `", to: "` + end.Format("2006-01-02") + `")`
+		contributionsCollectionParams = `(from: "` + start.Format(time.DateTime) + `", to: "` + end.Format(time.DateTime) + `")`
 	} else if start != nil {
-		contributionsCollectionParams = `(from: "` + start.Format("2006-01-02") + `")`
+		contributionsCollectionParams = `(from: "` + start.Format(time.DateTime) + `")`
 	}
-
-	fmt.Println("contributionsCollectionParams:", contributionsCollectionParams)
 
 	query := `
 	query {
