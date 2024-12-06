@@ -178,6 +178,7 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 
 		totalContributions += contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions
 		weeks = append(weeks, contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks...)
+		fmt.Println("length of weeks", len(weeks))
 	}
 	fmt.Println("for loop done")
 
