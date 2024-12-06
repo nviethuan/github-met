@@ -182,6 +182,8 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 	}
 	fmt.Println("for loop done")
 
+	fmt.Println("length of weeks ======", len(weeks))
+
 	calculatedStreakData := utils.CalculateStreak(weeks)
 
 	fmt.Println("Calculated streak done")
