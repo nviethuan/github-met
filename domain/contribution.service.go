@@ -236,9 +236,14 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 func GetAllContributions(username string, start *time.Time) (int, types.CalculatedStreakData) {
 	yearRanges := utils.RangeOfYears(start)
 
+	fmt.Println("yearRanges", yearRanges)
+	fmt.Println("len(yearRanges)", len(yearRanges))
+
 	contributionsDataChan := make(chan types.ContributionData, len(yearRanges))
 
 	for _, yearRange := range yearRanges {
+		fmt.Println("start", yearRange[0])
+		fmt.Println("end", yearRange[1])
 		go func(start, end time.Time) {
 			contributionsDataChan <- GetContributionsForYear(username, &start, &end)
 		}(yearRange[0], yearRange[1])
