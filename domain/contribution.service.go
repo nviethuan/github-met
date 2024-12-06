@@ -161,9 +161,9 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 	contributionsCollectionParams := ""
 
 	if start != nil && end != nil {
-		contributionsCollectionParams = `(from: "` + start.Format(time.DateTime) + `", to: "` + end.Format(time.DateTime) + `")`
+		contributionsCollectionParams = `(from: "` + start.Format(time.RFC3339) + `", to: "` + end.Format(time.RFC3339) + `")`
 	} else if start != nil {
-		contributionsCollectionParams = `(from: "` + start.Format(time.DateTime) + `")`
+		contributionsCollectionParams = `(from: "` + start.Format(time.RFC3339) + `")`
 	}
 
 	query := `
