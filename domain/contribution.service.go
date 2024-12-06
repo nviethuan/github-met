@@ -158,6 +158,7 @@ func GetUserCreatedAt(username *string) time.Time {
 // }
 
 func GetContributionsForYear(username string, start *time.Time, end *time.Time) types.ContributionData {
+	fmt.Printf("start: %v - end: %v\n", start, end)
 	contributionsCollectionParams := ""
 
 	if start != nil && end != nil {
