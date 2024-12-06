@@ -239,16 +239,19 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 	yearRanges := utils.RangeOfYears(start)
 
 	contributionsDataChan := make(chan types.ContributionData, len(yearRanges))
+	doneChan := make(chan bool, len(yearRanges))
 
 	for _, yearRange := range yearRanges {
 		go func(start, end time.Time) {
 			contributionsDataChan <- GetContributionsForYear(username, &start, &end)
+			doneChan <- true
 		}(yearRange[0], yearRange[1])
 	}
 
 	totalContributions := 0
 	weeks := []types.ContributionWeek{}
 	for i := 0; i < len(yearRanges); i++ {
+		<-doneChan
 		contributionData := <-contributionsDataChan
 
 		totalContributions += contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions
