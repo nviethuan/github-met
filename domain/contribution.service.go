@@ -150,13 +150,6 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 		return types.ContributionData{}, err
 	}
 
-	prettyJSON, err := json.Marshal(data)
-	if err != nil {
-		fmt.Println("Error generating pretty JSON:", err)
-	} else {
-		fmt.Printf("data: %v\n", string(prettyJSON))
-	}
-
 	return data, nil
 }
 
