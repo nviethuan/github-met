@@ -223,6 +223,13 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 		os.Exit(1)
 	}
 
+	prettyJSON, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		fmt.Println("Error generating pretty JSON:", err)
+	} else {
+		fmt.Println(string(prettyJSON))
+	}
+
 	return data
 }
 
@@ -245,13 +252,6 @@ func GetAllContributions(username string, start *time.Time) (int, types.Calculat
 		totalContributions += contributionData.Data.User.ContributionsCollection.ContributionCalendar.TotalContributions
 		weeks = append(weeks, contributionData.Data.User.ContributionsCollection.ContributionCalendar.Weeks...)
 	}
-
-	weeksJson, err := json.Marshal(weeks)
-	if err != nil {
-		fmt.Println("Error marshaling weeks:", err)
-		os.Exit(1)
-	}
-	fmt.Println(string(weeksJson))
 
 	calculatedStreakData := utils.CalculateStreak(weeks)
 
