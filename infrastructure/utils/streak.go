@@ -30,6 +30,7 @@ func CalculateStreak(weeks []types.ContributionWeek) types.CalculatedStreakData 
 					longestStreak = currentStreak
 				}
 				currentStreakLength = 0
+				currentStreak = types.StreakData{} // Reset current streak data
 			}
 		}
 	}
