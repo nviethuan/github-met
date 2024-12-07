@@ -21,28 +21,22 @@ func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
 }
 
 func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan types.StreakData) {
-	lastDay := (*days)[len(*days)-1]
-
-	fmt.Println("lastDay", lastDay)
-
-	if lastDay.ContributionCount == 0 {
-		date, err := time.Parse("2006-01-02", lastDay.Date)
-		if err != nil {
-			fmt.Println("Error parsing date:", err)
-			os.Exit(1)
-		}
-
-		currentStreakDataChan <- types.StreakData{
-			Streak:          0,
-			StreakStartDate: date,
-			StreakEndDate:   date,
-		}
+	currentStreakData := types.StreakData{
+		Streak:          0,
+		StreakStartDate: date,
+		StreakEndDate:   date,
 	}
 
 	currentStreakData := types.StreakData{}
 
 	for i := len(*days) - 1; i >= 0; i-- {
-		if (*days)[i].ContributionCount > 0 {
+		currentDay := (*days)[i]
+		
+		if currentDay.ContributionCount == 0 {
+			currentStreakDataChan <- currentStreakData
+		}
+				
+		if currentDay.ContributionCount > 0 {
 			date, err := time.Parse("2006-01-02", (*days)[i].Date)
 			if err != nil {
 				fmt.Println("Error parsing date:", err)
@@ -50,8 +44,6 @@ func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan typ
 			}
 			currentStreakData.StreakStartDate = date
 			currentStreakData.Streak++
-		} else {
-			break
 		}
 	}
 
