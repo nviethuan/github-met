@@ -5,6 +5,7 @@ import (
 	"github-met/types"
 	"os"
 	"time"
+	"sync"
 )
 
 func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
