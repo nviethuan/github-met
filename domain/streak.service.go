@@ -116,8 +116,21 @@ func SortContributionDays(contributionDays []types.ContributionDay) []types.Cont
 func quickSort(contributionDays []types.ContributionDay, low, high int) {
 	if low < high {
 		pi := partition(contributionDays, low, high)
-		quickSort(contributionDays, low, pi-1)
-		quickSort(contributionDays, pi+1, high)
+		
+		var wg sync.WaitGroup
+		wg.Add(2)
+		
+		go func() {
+			defer wg.Done()
+			quickSort(contributionDays, low, pi-1)
+		}()
+		
+		go func() {
+			defer wg.Done() 
+			quickSort(contributionDays, pi+1, high)
+		}()
+		
+		wg.Wait()
 	}
 }
 
