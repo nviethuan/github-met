@@ -158,6 +158,7 @@ func blockSort(contributionDays []types.ContributionDay, blockSize int) []types.
 
 	numBlocks := (n + blockSize - 1) / blockSize
 	blocks := make([][]types.ContributionDay, numBlocks)
+	var wg sync.WaitGroup
 
 	for i := 0; i < numBlocks; i++ {
 		start := i * blockSize
@@ -166,9 +167,14 @@ func blockSort(contributionDays []types.ContributionDay, blockSize int) []types.
 			end = n
 		}
 		blocks[i] = contributionDays[start:end]
-		quickSort(blocks[i], 0, len(blocks[i])-1)
+		wg.Add(1)
+		go func(block []types.ContributionDay) {
+			defer wg.Done()
+			quickSort(block, 0, len(block)-1)
+		}(blocks[i])
 	}
 
+	wg.Wait()
 	sortedDays := mergeBlocks(blocks)
 	return sortedDays
 }
