@@ -110,7 +110,7 @@ func FlattenContributionDays(weeks []types.ContributionWeek) []types.Contributio
 }
 
 func SortContributionDays(contributionDays []types.ContributionDay) []types.ContributionDay {
-	quickSort(contributionDays, 0, len(contributionDays)-1)
+	contributionDays = blockSort(contributionDays, 10)
 	return contributionDays
 }
 
@@ -147,4 +147,53 @@ func partition(contributionDays []types.ContributionDay, low, high int) int {
 	}
 	contributionDays[i+1], contributionDays[high] = contributionDays[high], contributionDays[i+1]
 	return i + 1
+}
+
+func blockSort(contributionDays []types.ContributionDay, blockSize int) []types.ContributionDay {
+	n := len(contributionDays)
+	if n <= blockSize {
+		quickSort(contributionDays, 0, n-1)
+		return contributionDays
+	}
+
+	numBlocks := (n + blockSize - 1) / blockSize
+	blocks := make([][]types.ContributionDay, numBlocks)
+
+	for i := 0; i < numBlocks; i++ {
+		start := i * blockSize
+		end := start + blockSize
+		if end > n {
+			end = n
+		}
+		blocks[i] = contributionDays[start:end]
+		quickSort(blocks[i], 0, len(blocks[i])-1)
+	}
+
+	sortedDays := mergeBlocks(blocks)
+	return sortedDays
+}
+
+func mergeBlocks(blocks [][]types.ContributionDay) []types.ContributionDay {
+	var sortedDays []types.ContributionDay
+	indices := make([]int, len(blocks))
+
+	for {
+		minIndex := -1
+		for i := 0; i < len(blocks); i++ {
+			if indices[i] < len(blocks[i]) {
+				if minIndex == -1 || blocks[i][indices[i]].Date < blocks[minIndex][indices[minIndex]].Date {
+					minIndex = i
+				}
+			}
+		}
+
+		if minIndex == -1 {
+			break
+		}
+
+		sortedDays = append(sortedDays, blocks[minIndex][indices[minIndex]])
+		indices[minIndex]++
+	}
+
+	return sortedDays
 }
