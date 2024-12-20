@@ -2,7 +2,7 @@ package utils
 
 import "time"
 
-func RangeOfYears(start *time.Time) [][]time.Time {
+func RangeOfYears(start *time.Time, timezone *time.Location) [][]time.Time {
 	if start == nil {
 		now := time.Now()
 		start = &now
@@ -14,8 +14,8 @@ func RangeOfYears(start *time.Time) [][]time.Time {
 	var yearRanges [][]time.Time
 
 	for year := currentYear; year <= endYear; year++ {
-		startOfYear := time.Date(year, time.January, 1, 0, 0, 0, 0, time.UTC)
-		endOfYear := time.Date(year, time.December, 31, 23, 59, 59, 0, time.UTC)
+		startOfYear := time.Date(year, time.January, 1, 0, 0, 0, 0, timezone)
+		endOfYear := time.Date(year, time.December, 31, 23, 59, 59, 0, timezone)
 		if year == currentYear {
 			startOfYear = *start
 		}

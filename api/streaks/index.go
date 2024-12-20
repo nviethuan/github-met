@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"net/http"
-	"time"
 	"github-met/domain"
 	"github-met/infrastructure/utils"
 	"github-met/types"
+	"net/http"
+	"time"
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -15,10 +15,15 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	timezone := r.URL.Query().Get("timezone")
+	if timezone == "" {
+		timezone = "Asia/Ho_Chi_Minh"
+	}
+
 	startDay := 6
 	endDay := 18
 
-	location, err := time.LoadLocation("Asia/Ho_Chi_Minh")
+	location, err := time.LoadLocation(timezone)
 	if err != nil {
 		http.Error(w, "Failed to load location", http.StatusInternalServerError)
 		return
@@ -35,7 +40,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	userCreatedAt := domain.GetUserCreatedAt(&username)
 
-	totalContributions, calculatedStreakData := domain.GetAllContributions(username, &userCreatedAt)
+	totalContributions, calculatedStreakData := domain.GetAllContributions(username, &userCreatedAt, location)
 
 	svg := utils.StreakSVG(&types.RenderData{
 		CalculatedStreakData: calculatedStreakData,
@@ -48,5 +53,3 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(svg))
 }
-
-

@@ -153,8 +153,8 @@ func GetContributionsForYear(username string, start *time.Time, end *time.Time) 
 	return data, nil
 }
 
-func GetAllContributions(username string, start *time.Time) (int, types.CalculatedStreakData) {
-	yearRanges := utils.RangeOfYears(start)
+func GetAllContributions(username string, start *time.Time, location *time.Location) (int, types.CalculatedStreakData) {
+	yearRanges := utils.RangeOfYears(start, location)
 
 	contributionsDataChan := make(chan types.ContributionData, len(yearRanges))
 	errorsChan := make(chan error, len(yearRanges))
