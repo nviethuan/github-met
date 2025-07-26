@@ -64,14 +64,6 @@ The API uses intelligent streak calculation:
 - ❌ **Next Day**: Only resets streak if you miss commits for 2 consecutive days
 - 🌍 **Timezone Aware**: Calculations respect your local timezone
 
-### Example Scenarios
-
-| Day | Commits | Streak | Explanation |
-|-----|---------|--------|-------------|
-| Yesterday | 3 commits | 5 | Had active streak |
-| Today | 0 commits | 5 | Streak preserved (grace period) |
-| Tomorrow | 0 commits | 0 | Streak reset (missed 2 days) |
-
 ## Environment Variables
 
 To run this API locally, you need to set these environment variables:
