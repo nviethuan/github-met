@@ -20,8 +20,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		timezone = "Asia/Ho_Chi_Minh"
 	}
 
-	startDay := 6
-	endDay := 18
+	startDayHour := 6
+	endDayHour := 18
 
 	location, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -32,7 +32,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	currentDay := time.Now().In(location)
 
 	var theme string
-	if currentDay.Hour() >= startDay && currentDay.Hour() < endDay {
+	if currentDay.Hour() >= startDayHour && currentDay.Hour() < endDayHour {
 		theme = "light"
 	} else {
 		theme = "dark"

@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"github-met/types"
 	"os"
-	"time"
 	"sync"
+	"time"
 )
 
-func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
+func CalculateStreak(days []types.ContributionDay, location *time.Location) types.CalculatedStreakData {
 	currentStreakData := make(chan types.StreakData)
 	longestStreakData := make(chan types.StreakData)
 
-	go CurrentStreak(&days, currentStreakData)
+	go CurrentStreak(&days, currentStreakData, location)
 	go LongestStreak(&days, longestStreakData)
 
 	return types.CalculatedStreakData{
@@ -21,22 +21,63 @@ func CalculateStreak(days []types.ContributionDay) types.CalculatedStreakData {
 	}
 }
 
-func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan types.StreakData) {
+func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan types.StreakData, location *time.Location) {
 	lastDay := (*days)[len(*days)-1]
 	date, err := time.Parse("2006-01-02", lastDay.Date)
 	if err != nil {
 		fmt.Println("Error parsing date:", err)
 		os.Exit(1)
 	}
-	
+
+	today := time.Now().In(location).Format("2006-01-02")
+	isToday := lastDay.Date == today
+
+	// Nếu hôm nay chưa có contribution, chúng ta cần kiểm tra streak từ hôm qua
+	if lastDay.ContributionCount == 0 && isToday {
+		// Tìm streak từ ngày hôm qua trở về trước
+		currentStreakData := types.StreakData{
+			Streak:          0,
+			StreakStartDate: date,
+			StreakEndDate:   date,
+		}
+
+		// Bắt đầu từ ngày hôm qua (index len-2)
+		for i := len(*days) - 2; i >= 0; i-- {
+			currentDay := (*days)[i]
+			currentDate, err := time.Parse("2006-01-02", currentDay.Date)
+			if err != nil {
+				fmt.Println("Error parsing date:", err)
+				os.Exit(1)
+			}
+
+			if currentDay.ContributionCount == 0 {
+				// Nếu gặp ngày không có contribution, dừng lại và trả về streak hiện tại
+				currentStreakDataChan <- currentStreakData
+				return
+			}
+
+			// Nếu có contribution, tăng streak
+			if currentStreakData.Streak == 0 {
+				currentStreakData.StreakEndDate = currentDate
+			}
+			currentStreakData.StreakStartDate = currentDate
+			currentStreakData.Streak++
+		}
+
+		currentStreakDataChan <- currentStreakData
+		return
+	}
+
+	// Nếu hôm nay có contribution hoặc không phải hôm nay, tính toán bình thường
 	if lastDay.ContributionCount == 0 {
 		currentStreakData := types.StreakData{
 			Streak:          0,
 			StreakStartDate: date,
 			StreakEndDate:   date,
 		}
-		
+
 		currentStreakDataChan <- currentStreakData
+		return
 	}
 
 	currentStreakData := types.StreakData{
@@ -52,13 +93,13 @@ func CurrentStreak(days *[]types.ContributionDay, currentStreakDataChan chan typ
 			fmt.Println("Error parsing date:", err)
 			os.Exit(1)
 		}
-		
+
 		if currentDay.ContributionCount == 0 {
 			currentStreakDataChan <- currentStreakData
+			return
 		}
-				
+
 		if currentDay.ContributionCount > 0 {
-		
 			currentStreakData.StreakStartDate = date
 			currentStreakData.Streak++
 		}
@@ -117,20 +158,20 @@ func SortContributionDays(contributionDays []types.ContributionDay) []types.Cont
 func quickSort(contributionDays []types.ContributionDay, low, high int) {
 	if low < high {
 		pi := partition(contributionDays, low, high)
-		
+
 		var wg sync.WaitGroup
 		wg.Add(2)
-		
+
 		go func() {
 			defer wg.Done()
 			quickSort(contributionDays, low, pi-1)
 		}()
-		
+
 		go func() {
-			defer wg.Done() 
+			defer wg.Done()
 			quickSort(contributionDays, pi+1, high)
 		}()
-		
+
 		wg.Wait()
 	}
 }

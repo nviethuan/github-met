@@ -180,7 +180,7 @@ func GetAllContributions(username string, start *time.Time, location *time.Locat
 	}
 
 	contributionDays := SortContributionDays(FlattenContributionDays(weeks))
-	calculatedStreakData := CalculateStreak(contributionDays)
+	calculatedStreakData := CalculateStreak(contributionDays, location)
 
 	return totalContributions, calculatedStreakData
 }
