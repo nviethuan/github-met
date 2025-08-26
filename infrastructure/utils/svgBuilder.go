@@ -16,7 +16,7 @@ func StreakSVG(data *types.RenderData) string {
 		textColor = "#FFFEFE"
 		strokeColor = "#E4E2E2"
 	} else {
-		background = "#CFCFCF"
+		background = "#EEEEEE"
 		textColor = "#151515"
 		strokeColor = "#464646"
 	}
