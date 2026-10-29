@@ -28,12 +28,44 @@ func StreakSVG(data *types.RenderData) string {
   <style>
     @keyframes currstreak {
       0% { font-size: 3px; opacity: 0.2; }
-      80% { font-size: 34px; opacity: 1; }
+      78% { font-size: 35px; opacity: 1; }
+      100% { font-size: 28px; opacity: 1; }
+    }
+    @keyframes statReveal {
+      0% { font-size: 4px; opacity: 0; }
+      78% { font-size: 32px; opacity: 1; }
       100% { font-size: 28px; opacity: 1; }
     }
     @keyframes fadein {
       0% { opacity: 0; }
       100% { opacity: 1; }
+    }
+    @keyframes lineReveal {
+      0% { stroke-dashoffset: 142; opacity: 0; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes ringReveal {
+      0% { stroke-dashoffset: 251.2; opacity: 0; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes ringPulse {
+      0%, 100% { stroke-width: 5; opacity: 0.85; }
+      50% { stroke-width: 6; opacity: 1; }
+    }
+    @keyframes flameGlow {
+      0%, 100% { filter: drop-shadow(0 0 0 #FB8C00); }
+      50% { filter: drop-shadow(0 0 5px #FB8C00); }
+    }
+    @keyframes pillReveal {
+      0% { opacity: 0; transform: scale(0.78); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
+        animation-iteration-count: 1 !important;
+      }
     }
   </style>
   <defs>
@@ -47,16 +79,16 @@ func StreakSVG(data *types.RenderData) string {
   </defs>
   <g clip-path="url(#outer_rectangle)">
     <g style="isolation: isolate">
-      <rect stroke="#E4E2E2" fill="` + background + `" rx="4.5" x="0.5" y="0.5" width="494" height="194"/>
+      <rect stroke="#E4E2E2" fill="` + background + `" rx="4.5" x="0.5" y="0.5" width="494" height="194" style="opacity: 0; animation: fadein 0.45s ease-out forwards"/>
     </g>
     <g style="isolation: isolate">
-      <line x1="165" y1="28" x2="165" y2="170" vector-effect="non-scaling-stroke" stroke-width="1" stroke="#E4E2E2" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"/>
-      <line x1="330" y1="28" x2="330" y2="170" vector-effect="non-scaling-stroke" stroke-width="1" stroke="#E4E2E2" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"/>
+      <line x1="165" y1="28" x2="165" y2="170" vector-effect="non-scaling-stroke" stroke-width="1" stroke="#E4E2E2" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3" style="stroke-dasharray: 142; stroke-dashoffset: 142; opacity: 0; animation: lineReveal 0.75s ease-out forwards 0.2s"/>
+      <line x1="330" y1="28" x2="330" y2="170" vector-effect="non-scaling-stroke" stroke-width="1" stroke="#E4E2E2" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3" style="stroke-dasharray: 142; stroke-dashoffset: 142; opacity: 0; animation: lineReveal 0.75s ease-out forwards 0.35s"/>
     </g>
       <g style="isolation: isolate">
         <!-- Total Contributions big number -->
         <g transform="translate(82.5, 48)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.6s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: statReveal 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.35s">
           ` + FormatNumber(data.TotalContributions) + `
           </text>
         </g>
@@ -79,7 +111,7 @@ func StreakSVG(data *types.RenderData) string {
       <g style="isolation: isolate">
         <!-- Current Streak big number -->
         <g transform="translate(247.5, 48)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="animation: currstreak 0.6s linear forwards">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="animation: currstreak 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s">
             ` + strconv.Itoa(data.CurrentStreak.Streak) + `
           </text>
         </g>
@@ -93,12 +125,12 @@ func StreakSVG(data *types.RenderData) string {
 
         <!-- Current Streak range -->
         <g transform="translate(247.5, 145)" style="opacity: 0; animation: fadein 0.5s linear forwards 0.9s">
-          <rect x="-69" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
+          <rect x="-69" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `" style="opacity: 0; transform-box: fill-box; transform-origin: center; animation: pillReveal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.05s"/>
           <text x="-39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
             ` + data.CurrentStreak.StreakStartDate.Format("2006/Jan/02") + `
           </text>
           <text x="0" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="11px">→</text>
-          <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
+          <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `" style="opacity: 0; transform-box: fill-box; transform-origin: center; animation: pillReveal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.2s"/>
           <text x="39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
             ` + data.CurrentStreak.StreakEndDate.Format("2006/Jan/02") + `
           </text>
@@ -106,19 +138,19 @@ func StreakSVG(data *types.RenderData) string {
 
         <!-- Ring around number -->
         <g mask="url(#mask_out_ring_behind_fire)">
-          <circle cx="247.5" cy="71" r="40" fill="none" stroke="#FB8C00" stroke-width="5" style="opacity: 0; animation: fadein 0.5s linear forwards 0.4s"/>
+          <circle cx="247.5" cy="71" r="40" fill="none" stroke="#FB8C00" stroke-width="5" stroke-dasharray="251.2" stroke-dashoffset="251.2" style="opacity: 0; animation: ringReveal 1s ease-out forwards 0.35s, ringPulse 2.4s ease-in-out 1.35s infinite"/>
         </g>
         <!-- Fire icon -->
         <g transform="translate(247.5, 19.5)" stroke-opacity="0" style="opacity: 0; animation: fadein 0.5s linear forwards 0.6s">
           <path d="M -12 -0.5 L 15 -0.5 L 15 23.5 L -12 23.5 L -12 -0.5 Z" fill="none"/>
-          <path d="M 1.5 0.67 C 1.5 0.67 2.24 3.32 2.24 5.47 C 2.24 7.53 0.89 9.2 -1.17 9.2 C -3.23 9.2 -4.79 7.53 -4.79 5.47 L -4.76 5.11 C -6.78 7.51 -8 10.62 -8 13.99 C -8 18.41 -4.42 22 0 22 C 4.42 22 8 18.41 8 13.99 C 8 8.6 5.41 3.79 1.5 0.67 Z M -0.29 19 C -2.07 19 -3.51 17.6 -3.51 15.86 C -3.51 14.24 -2.46 13.1 -0.7 12.74 C 1.07 12.38 2.9 11.53 3.92 10.16 C 4.31 11.45 4.51 12.81 4.51 14.2 C 4.51 16.85 2.36 19 -0.29 19 Z" fill="#FB8C00" stroke-opacity="0"/>
+          <path d="M 1.5 0.67 C 1.5 0.67 2.24 3.32 2.24 5.47 C 2.24 7.53 0.89 9.2 -1.17 9.2 C -3.23 9.2 -4.79 7.53 -4.79 5.47 L -4.76 5.11 C -6.78 7.51 -8 10.62 -8 13.99 C -8 18.41 -4.42 22 0 22 C 4.42 22 8 18.41 8 13.99 C 8 8.6 5.41 3.79 1.5 0.67 Z M -0.29 19 C -2.07 19 -3.51 17.6 -3.51 15.86 C -3.51 14.24 -2.46 13.1 -0.7 12.74 C 1.07 12.38 2.9 11.53 3.92 10.16 C 4.31 11.45 4.51 12.81 4.51 14.2 C 4.51 16.85 2.36 19 -0.29 19 Z" fill="#FB8C00" stroke-opacity="0" style="animation: flameGlow 1.8s ease-in-out 1.25s infinite"/>
         </g>
       </g>
 
       <g style="isolation: isolate">
         <!-- Longest Streak big number -->
         <g transform="translate(412.5, 48)">
-          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.2s">
+          <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + textColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="700" font-size="28px" font-style="normal" style="opacity: 0; animation: statReveal 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.65s">
             ` + strconv.Itoa(data.LongestStreak.Streak) + `
           </text>
         </g>
@@ -132,12 +164,12 @@ func StreakSVG(data *types.RenderData) string {
 
         <!-- Longest Streak range -->
         <g transform="translate(412.5, 131)" style="opacity: 0; animation: fadein 0.5s linear forwards 1.4s">
-          <rect x="-69" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
+          <rect x="-69" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `" style="opacity: 0; transform-box: fill-box; transform-origin: center; animation: pillReveal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.05s"/>
           <text x="-39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
             ` + data.LongestStreak.StreakStartDate.Format("2006/Jan/02") + `
           </text>
           <text x="0" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="11px">→</text>
-          <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
+          <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `" style="opacity: 0; transform-box: fill-box; transform-origin: center; animation: pillReveal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.2s"/>
           <text x="39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
             ` + data.LongestStreak.StreakEndDate.Format("2006/Jan/02") + `
           </text>
