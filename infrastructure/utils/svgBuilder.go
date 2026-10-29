@@ -171,7 +171,7 @@ func StreakSVG(data *types.RenderData) string {
           <text x="0" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="11px">→</text>
           <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `" style="opacity: 0; transform-box: fill-box; transform-origin: center; animation: pillReveal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.2s"/>
           <text x="39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
-            ` + data.LongestStreak.StreakEndDate.Format("02 Jan,≈ 06") + `
+            ` + data.LongestStreak.StreakEndDate.Format("02 Jan, 06") + `
           </text>
         </g>
       </g>
