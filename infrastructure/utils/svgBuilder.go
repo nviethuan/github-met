@@ -95,12 +95,12 @@ func StreakSVG(data *types.RenderData) string {
         <g transform="translate(247.5, 145)" style="opacity: 0; animation: fadein 0.5s linear forwards 0.9s">
           <rect x="-69" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
           <text x="-39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
-            ` + data.CurrentStreak.StreakStartDate.Format("02 Jan 2006") + `
+            ` + data.CurrentStreak.StreakStartDate.Format("2006/Jan/02") + `
           </text>
           <text x="0" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="11px">→</text>
           <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
           <text x="39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
-            ` + data.CurrentStreak.StreakEndDate.Format("02 Jan 2006") + `
+            ` + data.CurrentStreak.StreakEndDate.Format("2006/Jan/02") + `
           </text>
         </g>
 
@@ -134,12 +134,12 @@ func StreakSVG(data *types.RenderData) string {
         <g transform="translate(412.5, 131)" style="opacity: 0; animation: fadein 0.5s linear forwards 1.4s">
           <rect x="-69" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
           <text x="-39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
-            ` + data.LongestStreak.StreakStartDate.Format("02 Jan 2006") + `
+            ` + data.LongestStreak.StreakStartDate.Format("2006/Jan/02") + `
           </text>
           <text x="0" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="11px">→</text>
           <rect x="9" y="0" width="60" height="22" rx="11" fill="` + datePillFill + `"/>
           <text x="39" y="15" text-anchor="middle" fill="` + strokeColor + `" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="600" font-size="10px">
-            ` + data.LongestStreak.StreakEndDate.Format("02 Jan 2006") + `
+            ` + data.LongestStreak.StreakEndDate.Format("2006/Jan/02") + `
           </text>
         </g>
       </g>
