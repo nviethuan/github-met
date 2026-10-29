@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -26,6 +27,149 @@ func init() {
 	if githubGraphQLURL == "" {
 		githubGraphQLURL = "https://api.github.com/graphql"
 	}
+}
+
+func GetUserLanguages(username string) ([]types.LanguageData, error) {
+	const query = `
+	query($login: String!, $after: String) {
+	  user(login: $login) {
+	    repositories(ownerAffiliations: OWNER, first: 10, after: $after, isFork: false) {
+	      nodes {
+	        languages(first: 40, orderBy: {field: SIZE, direction: DESC}) {
+	          edges {
+	            size
+	            node {
+	              name
+	              color
+	            }
+	          }
+	        }
+	      }
+	      pageInfo {
+	        endCursor
+	        hasNextPage
+	      }
+	    }
+	  }
+	}`
+
+	var cursor *string
+	languagesByName := make(map[string]types.LanguageData)
+	client := &http.Client{Timeout: 15 * time.Second}
+
+	for {
+		graphqlQuery := struct {
+			Query     string `json:"query"`
+			Variables struct {
+				Login string  `json:"login"`
+				After *string `json:"after"`
+			} `json:"variables"`
+		}{
+			Query: query,
+			Variables: struct {
+				Login string  `json:"login"`
+				After *string `json:"after"`
+			}{
+				Login: username,
+				After: cursor,
+			},
+		}
+
+		payload, err := json.Marshal(graphqlQuery)
+		if err != nil {
+			return nil, err
+		}
+
+		req, err := http.NewRequest("POST", githubGraphQLURL, bytes.NewBuffer(payload))
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Authorization", "Bearer "+token)
+		req.Header.Set("Content-Type", "application/json")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			resp.Body.Close()
+			return nil, fmt.Errorf("GitHub API returned status %s", resp.Status)
+		}
+
+		var result struct {
+			Data struct {
+				User *struct {
+					Repositories struct {
+						Nodes []struct {
+							Languages struct {
+								Edges []struct {
+									Size int64 `json:"size"`
+									Node struct {
+										Name  string `json:"name"`
+										Color string `json:"color"`
+									} `json:"node"`
+								} `json:"edges"`
+							} `json:"languages"`
+						} `json:"nodes"`
+						PageInfo struct {
+							EndCursor   *string `json:"endCursor"`
+							HasNextPage bool    `json:"hasNextPage"`
+						} `json:"pageInfo"`
+					} `json:"repositories"`
+				} `json:"user"`
+			} `json:"data"`
+			Errors []struct {
+				Message string `json:"message"`
+			} `json:"errors"`
+		}
+
+		err = json.NewDecoder(resp.Body).Decode(&result)
+		resp.Body.Close()
+		if err != nil {
+			return nil, err
+		}
+		if len(result.Errors) > 0 {
+			return nil, fmt.Errorf("GitHub GraphQL error: %s", result.Errors[0].Message)
+		}
+		if result.Data.User == nil {
+			return nil, fmt.Errorf("GitHub user %q was not found", username)
+		}
+
+		for _, repository := range result.Data.User.Repositories.Nodes {
+			for _, edge := range repository.Languages.Edges {
+				language := languagesByName[edge.Node.Name]
+				language.Name = edge.Node.Name
+				if language.Color == "" {
+					language.Color = edge.Node.Color
+				}
+				language.Bytes += edge.Size
+				languagesByName[edge.Node.Name] = language
+			}
+		}
+
+		pageInfo := result.Data.User.Repositories.PageInfo
+		if !pageInfo.HasNextPage {
+			break
+		}
+		if pageInfo.EndCursor == nil || (cursor != nil && *pageInfo.EndCursor == *cursor) {
+			return nil, fmt.Errorf("GitHub returned an invalid repository pagination cursor")
+		}
+		cursor = pageInfo.EndCursor
+	}
+
+	languages := make([]types.LanguageData, 0, len(languagesByName))
+	for _, language := range languagesByName {
+		languages = append(languages, language)
+	}
+	sort.Slice(languages, func(i, j int) bool {
+		if languages[i].Bytes == languages[j].Bytes {
+			return languages[i].Name < languages[j].Name
+		}
+		return languages[i].Bytes > languages[j].Bytes
+	})
+
+	return languages, nil
 }
 
 func GetUserCreatedAt(username *string) time.Time {

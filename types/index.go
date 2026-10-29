@@ -6,6 +6,12 @@ type GraphQLQuery struct {
 	Query string `json:"query"`
 }
 
+type LanguageData struct {
+	Name  string
+	Color string
+	Bytes int64
+}
+
 type User struct {
 	Data struct {
 		User struct {
@@ -31,8 +37,8 @@ type ContributionData struct {
 		User struct {
 			ContributionsCollection struct {
 				ContributionCalendar struct {
-					Weeks []ContributionWeek `json:"weeks"`
-					TotalContributions int `json:"totalContributions"`
+					Weeks              []ContributionWeek `json:"weeks"`
+					TotalContributions int                `json:"totalContributions"`
 				} `json:"contributionCalendar"`
 			} `json:"contributionsCollection"`
 			CreatedAt string `json:"createdAt"`
@@ -49,8 +55,8 @@ type StreakData struct {
 }
 
 type CalculatedStreakData struct {
-	CurrentStreak      StreakData
-	LongestStreak      StreakData
+	CurrentStreak StreakData
+	LongestStreak StreakData
 }
 
 type RenderData struct {
@@ -59,5 +65,3 @@ type RenderData struct {
 	StartedDate        time.Time
 	Background         string
 }
-
-

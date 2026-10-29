@@ -1,6 +1,7 @@
 package main
 
 import (
+	languages "github-met/api/languages"
 	streaks "github-met/api/streaks"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/streaks", streaks.Handler)
+	mux.HandleFunc("/api/languages", languages.Handler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
