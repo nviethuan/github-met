@@ -138,7 +138,7 @@ func StreakSVG(data *types.RenderData) string {
 
         <!-- Ring around number -->
         <g mask="url(#mask_out_ring_behind_fire)">
-          <circle cx="247.5" cy="71" r="40" fill="none" stroke="#FB8C00" stroke-width="5" stroke-dasharray="251.2" stroke-dashoffset="251.2" style="opacity: 0; animation: ringReveal 1s ease-out forwards 0.35s, ringPulse 2.4s ease-in-out 1.35s infinite"/>
+          <circle cx="247.5" cy="71" r="40" transform="rotate(-90 247.5 71)" fill="none" stroke="#FB8C00" stroke-width="5" stroke-dasharray="251.2" stroke-dashoffset="251.2" style="opacity: 0; animation: ringReveal 1s ease-out forwards 0.35s, ringPulse 2.4s ease-in-out 1.35s infinite"/>
         </g>
         <!-- Fire icon -->
         <g transform="translate(247.5, 19.5)" stroke-opacity="0" style="opacity: 0; animation: fadein 0.5s linear forwards 0.6s">
