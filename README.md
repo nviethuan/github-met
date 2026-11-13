@@ -56,6 +56,15 @@ The API returns an SVG image with the following information:
 - **Account Creation Date**: When your GitHub account was created
 - **Visual Theme**: Light theme (6 AM - 6 PM) or Dark theme (6 PM - 6 AM)
 
+### JSON Endpoints
+
+Use the JSON endpoints from third-party websites:
+
+- `GET /api/streaks/json?username=octocat` (optional `timezone`, defaults to `Asia/Ho_Chi_Minh`)
+- `GET /api/languages/json?username=octocat`
+
+Both endpoints allow cross-origin `GET` requests and return JSON. Streak dates are ISO 8601 timestamps; language entries include `name`, `color`, and `bytes`.
+
 ## Streak Logic
 
 The API uses intelligent streak calculation:
