@@ -103,7 +103,7 @@ func StreakSVG(data *types.RenderData) string {
         <!-- Total Contributions range -->
         <g transform="translate(82.5, 114)">
           <text x="0" y="32" stroke-width="0" text-anchor="middle" fill="` + strokeColor + `" stroke="none" font-family="&quot;Segoe UI&quot;, Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
-          ` + data.StartedDate.Format("02 Jan, 06") + ` - Present
+          ` + data.StartedDate.Format("02 Jan, 2006") + ` - Present
           </text>
         </g>
       </g>
